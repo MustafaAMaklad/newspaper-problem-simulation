@@ -5,38 +5,38 @@ import pandas as pd
 def simulate(type_rn, demand_rn, order_quantity, sell_price, cost_price,
   scrap_value, news_values, news_probs, demand_values, good_demand_probs,
   fair_demand_probs, poor_demand_probs, days=10):
-  table = {'day': [],
-        'rnnt': [],
-        'news_type': [],
-        'rnd': [],
-        'demand': [],
-        'revenue': [],
-        'cost': [],
-        'lost_profit': [],
-        'scrape': [],
-        'daily_profit': []}
-  cost = order_quantity * cost_price
-  news_type_table = assign_rn(news_values, news_probs)
-  good_demand_table = assign_rn(demand_values, good_demand_probs)
-  fair_demand_table = assign_rn(demand_values[:-1], fair_demand_probs)
-  poor_demand_table = assign_rn(demand_values[:-2], poor_demand_probs)
+    table = {'day': [],
+            'rnnt': [],
+            'news_type': [],
+            'rnd': [],
+            'demand': [],
+            'revenue': [],
+            'cost': [],
+            'lost_profit': [],
+            'scrape': [],
+            'daily_profit': []}
+    cost = order_quantity * cost_price
+    news_type_table = assign_rn(news_values, news_probs)
+    good_demand_table = assign_rn(demand_values, good_demand_probs)
+    fair_demand_table = assign_rn(demand_values[:-1], fair_demand_probs)
+    poor_demand_table = assign_rn(demand_values[:-2], poor_demand_probs)
 
-  for i in range(days):
-    table['day'].append(i + 1)
-    table['rnnt'].append(type_rn[i])
-    table['news_type'].append(get_news_type(type_rn[i], news_type_table))
-    table['rnd'].append(demand_rn[i])
-    table['demand'].append(get_demand_value(demand_rn[i], get_demand_table(table['news_type'][i], 
-                                                          good_demand_table, fair_demand_table, poor_demand_table)))
-    table['revenue'].append(calc_revenue(order_quantity, table['demand'][i]) * sell_price)
-    table['cost'].append(cost)
-    table['lost_profit'].append(calc_lost_profit(order_quantity, table['demand'][i], sell_price, cost_price))
-    table['scrape'].append(calc_scrape(order_quantity, table['demand'][i], scrap_value))
-    table['daily_profit'].append(calc_daily_profit(table['revenue'][i], cost, table['lost_profit'][i], table['scrape'][i]))
-    
-  data = pd.DataFrame(table).reset_index(drop=True, inplace=True)
-  data.head()
-  return data
+    for i in range(days):
+        table['day'].append(i + 1)
+        table['rnnt'].append(type_rn[i])
+        table['news_type'].append(get_news_type(type_rn[i], news_type_table))
+        table['rnd'].append(demand_rn[i])
+        table['demand'].append(get_demand_value(demand_rn[i], get_demand_table(table['news_type'][i], 
+                                                            good_demand_table, fair_demand_table, poor_demand_table)))
+        table['revenue'].append(calc_revenue(order_quantity, table['demand'][i]) * sell_price)
+        table['cost'].append(cost)
+        table['lost_profit'].append(calc_lost_profit(order_quantity, table['demand'][i], sell_price, cost_price))
+        table['scrape'].append(calc_scrape(order_quantity, table['demand'][i], scrap_value))
+        table['daily_profit'].append(calc_daily_profit(table['revenue'][i], cost, table['lost_profit'][i], table['scrape'][i]))
+        
+    data = pd.DataFrame(table).reset_index(drop=True, inplace=True)
+    data.head()
+    return data
 
 # assign random digits from cumulative probabilities
 def assign_rn(values, probablities):
